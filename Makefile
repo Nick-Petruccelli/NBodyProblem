@@ -12,8 +12,6 @@ $(BIN): $(OBJS)
 	$(CC) $(OBJS) -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	echo "hit"
-	echo $<
 	$(CC) -c $< -o $@
 
 run: $(BIN)

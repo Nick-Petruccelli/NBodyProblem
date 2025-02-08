@@ -46,7 +46,7 @@ void NBodySim::three_body_init(){
 	m_particles.fy = (double*)malloc(3*sizeof(double));
 	m_particles.fz = (double*)malloc(3*sizeof(double));
 
-	m_particles.mass[0] = 1.9891E30;
+	m_particles.mass[0] = 10000000000000000;
 	m_particles.x[0] = 0;
 	m_particles.y[0] = 0;
 	m_particles.z[0] = 0;
@@ -57,27 +57,27 @@ void NBodySim::three_body_init(){
 	m_particles.fy[0] = 0;
 	m_particles.fz[0] = 0;
 
-	m_particles.mass[1] = 5.972E24;
-	m_particles.x[1] = 147.58E6;
-	m_particles.y[1] = 0;
+	m_particles.mass[1] = 100;
+	m_particles.x[1] = 0;
+	m_particles.y[1] = 1500.98;
 	m_particles.z[1] = 0;
-	m_particles.vx[1] = 29.8;
+	m_particles.vx[1] = 1.8;
 	m_particles.vy[1] = 0;
 	m_particles.vz[1] = 0;
 	m_particles.fx[1] = 0;
 	m_particles.fy[1] = 0;
 	m_particles.fz[1] = 0;
 
-	m_particles.mass[0] = 7.34767309E22;
-	m_particles.x[0] = 384400;
-	m_particles.y[0] = 0;
-	m_particles.z[0] = 0;
-	m_particles.vx[0] = 30.822;
-	m_particles.vy[0] = 0;
-	m_particles.vz[0] = 0;
-	m_particles.fx[0] = 0;
-	m_particles.fy[0] = 0;
-	m_particles.fz[0] = 0;
+	m_particles.mass[2] = 110;
+	m_particles.x[2] = 0;
+	m_particles.y[2] = -1700;
+	m_particles.z[2] = 0;
+	m_particles.vx[2] = -1.8;
+	m_particles.vy[2] = 0;
+	m_particles.vz[2] = 0;
+	m_particles.fx[2] = 0;
+	m_particles.fy[2] = 0;
+	m_particles.fz[2] = 0;
 }
 
 void NBodySim::start(double dt, unsigned int iterations, unsigned int dump_rate, std::filesystem::path out){
@@ -85,10 +85,18 @@ void NBodySim::start(double dt, unsigned int iterations, unsigned int dump_rate,
 	m_iterations = iterations;
 	m_dump_rate = dump_rate;
 
+	std::ofstream out_file;
+	out_file.open(out, std::ofstream::out | std::ofstream::trunc);
+	if(!out_file.is_open()){
+		std::cerr << "Error: Unable to open output file" << std::endl;
+		return;
+	}
+
 	for(unsigned int i=0; i<m_iterations; i++){
 		step();
-		if(i%m_dump_rate == 0)
-			dump(out);
+		if(i%m_dump_rate == 0){
+			dump_data(out_file);
+		}
 	}
 }
 
@@ -103,11 +111,11 @@ void NBodySim::set_gravitational_force(unsigned int idx){
 	for(unsigned int i=0; i<m_particle_count; i++){
 		if(i == idx)
 			continue;
-		double dist = std::sqrt(std::pow((m_particles.x[i] - m_particles.x[idx]), 2) + std::pow((m_particles.y[i] - m_particles.y[idx]), 2) + std::pow((m_particles.z[i] - m_particles.z[idx]), 2));
-		double force = m_G*(m_particles.mass[i]*m_particles.mass[idx])/std::pow(dist,2);
-		m_particles.fx[idx] = force*(m_particles.x[i]-m_particles.x[idx])/dist;
-		m_particles.fy[idx] = force*(m_particles.y[i]-m_particles.y[idx])/dist;
-		m_particles.fz[idx] = force*(m_particles.z[i]-m_particles.z[idx])/dist;
+		double dist = sqrt(pow((m_particles.x[i] - m_particles.x[idx]), 2) + pow((m_particles.y[i] - m_particles.y[idx]), 2) + pow((m_particles.z[i] - m_particles.z[idx]), 2)) + .1;
+		double force = m_G*(m_particles.mass[i]*m_particles.mass[idx])/pow(dist,2);
+		m_particles.fx[idx] += force*(m_particles.x[i]-m_particles.x[idx])/dist;
+		m_particles.fy[idx] += force*(m_particles.y[i]-m_particles.y[idx])/dist;
+		m_particles.fz[idx] += force*(m_particles.z[i]-m_particles.z[idx])/dist;
 	}
 }
 
@@ -124,13 +132,7 @@ void NBodySim::integrate_motion(unsigned int i){
 	m_particles.z[i] += m_particles.vz[i] * m_dt;
 }
 
-void NBodySim::dump(std::filesystem::path dest){
-	std::ofstream out_file;
-	out_file.open(dest);
-	if(!out_file.is_open()){
-		std::cerr << "Error: Unable to open output file" << std::endl;
-		return;
-	}
+void NBodySim::dump_data(std::ofstream &out_file){
 	out_file << m_particle_count << "\t";
 	for(unsigned int i=0; i<m_particle_count; i++){
 		out_file << m_particles.mass[i] << "\t" << m_particles.x[i]  << "\t" << m_particles.y[i] << "\t" << m_particles.z[i] << "\t";
@@ -138,4 +140,18 @@ void NBodySim::dump(std::filesystem::path dest){
 		out_file << m_particles.fx[i] << "\t" << m_particles.fy[i] << "\t" << m_particles.fz[i] << "\t";
 	}
 	out_file << std::endl;
+}
+
+void NBodySim::close(){
+	free(m_particles.mass);
+	free(m_particles.x);
+	free(m_particles.y);
+	free(m_particles.z);
+	free(m_particles.vx);
+	free(m_particles.vy);
+	free(m_particles.vz);
+	free(m_particles.fx);
+	free(m_particles.fy);
+	free(m_particles.fz);
+	std::cout << "Simulation closed." << std::endl;
 }

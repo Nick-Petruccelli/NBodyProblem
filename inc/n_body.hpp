@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <fstream>
 struct particles{
 	double* mass;
 	double* x;
@@ -23,7 +24,7 @@ public:
 	void close();
 private:
 	void step();
-	void dump(std::filesystem::path dest);
+	void dump_data(std::ofstream &out_file);
 	void set_gravitational_force(unsigned int i);
 	void integrate_motion(unsigned int i);
 private:
