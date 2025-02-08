@@ -20,6 +20,7 @@ public:
 	void three_body_init();
 	void file_init(std::filesystem::path path);
 	void start(double dt, unsigned int iterations, unsigned int dump_rate, std::filesystem::path out);
+	void close();
 private:
 	void step();
 	void dump(std::filesystem::path dest);

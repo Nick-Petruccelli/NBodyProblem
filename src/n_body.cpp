@@ -1,5 +1,7 @@
 #include "../inc/n_body.hpp"
 #include <cmath>
+#include <fstream>
+#include <iostream>
 #include <random>
 
 void NBodySim::rand_init(unsigned int n_particles){
@@ -123,5 +125,17 @@ void NBodySim::integrate_motion(unsigned int i){
 }
 
 void NBodySim::dump(std::filesystem::path dest){
-	
+	std::ofstream out_file;
+	out_file.open(dest);
+	if(!out_file.is_open()){
+		std::cerr << "Error: Unable to open output file" << std::endl;
+		return;
+	}
+	out_file << m_particle_count << "\t";
+	for(unsigned int i=0; i<m_particle_count; i++){
+		out_file << m_particles.mass[i] << "\t" << m_particles.x[i]  << "\t" << m_particles.y[i] << "\t" << m_particles.z[i] << "\t";
+		out_file << m_particles.vx[i] << "\t" << m_particles.vy[i] << "\t" << m_particles.vz[i] << "\t";
+		out_file << m_particles.fx[i] << "\t" << m_particles.fy[i] << "\t" << m_particles.fz[i] << "\t";
+	}
+	out_file << std::endl;
 }
