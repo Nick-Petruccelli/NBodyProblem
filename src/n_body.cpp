@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <sstream>
+#include <string>
 
 void NBodySim::rand_init(unsigned int n_particles){
 	m_particle_count = n_particles;
@@ -78,6 +80,63 @@ void NBodySim::three_body_init(){
 	m_particles.fx[2] = 0;
 	m_particles.fy[2] = 0;
 	m_particles.fz[2] = 0;
+}
+
+void NBodySim::file_init(std::filesystem::path path){
+	std::ifstream file(path);
+	if(!file.is_open()){
+		std::cerr << "Failed to open input file" << std::endl;
+	}
+
+	std::string text;
+	std::getline(file, text);
+	std::stringstream ss(text);
+	std::string data;
+
+	std::getline(ss, data, '\t');
+	m_particle_count = std::stod(data);
+     	m_particles.mass = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.x = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.y = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.z = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.vx = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.vy = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.vz = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.fx = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.fy = (double*)malloc(m_particle_count*sizeof(double));
+	m_particles.fz = (double*)malloc(m_particle_count*sizeof(double));
+	for(int i=0; i<m_particle_count; i++){
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.mass[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.x[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.y[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.z[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.vx[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.vy[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.vz[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.fx[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.fy[i] = std::stod(data);
+		std::getline(ss, data, '\t');
+		std::cout << data << std::endl;
+		m_particles.fz[i] = std::stod(data);
+	}
 }
 
 void NBodySim::start(double dt, unsigned int iterations, unsigned int dump_rate, std::filesystem::path out){
