@@ -48,7 +48,7 @@ void NBodySim::three_body_init() {
   m_particles.fy = (double *)malloc(3 * sizeof(double));
   m_particles.fz = (double *)malloc(3 * sizeof(double));
 
-  m_particles.mass[0] = 10000000000000000;
+  m_particles.mass[0] = 1.989E27;
   m_particles.x[0] = 0;
   m_particles.y[0] = 0;
   m_particles.z[0] = 0;
@@ -59,23 +59,23 @@ void NBodySim::three_body_init() {
   m_particles.fy[0] = 0;
   m_particles.fz[0] = 0;
 
-  m_particles.mass[1] = 100;
-  m_particles.x[1] = 0;
-  m_particles.y[1] = 1500.98;
+  m_particles.mass[1] = 5.972E24;
+  m_particles.x[1] = 147.69E6;
+  m_particles.y[1] = 0;
   m_particles.z[1] = 0;
-  m_particles.vx[1] = 1.8;
-  m_particles.vy[1] = 0;
+  m_particles.vx[1] = 0;
+  m_particles.vy[1] = 4.78;
   m_particles.vz[1] = 0;
   m_particles.fx[1] = 0;
   m_particles.fy[1] = 0;
   m_particles.fz[1] = 0;
 
-  m_particles.mass[2] = 110;
-  m_particles.x[2] = 0;
-  m_particles.y[2] = -1700;
+  m_particles.mass[2] = 7.34767309E22;
+  m_particles.x[2] = 147.69E6 + 384400;
+  m_particles.y[2] = 0;
   m_particles.z[2] = 0;
-  m_particles.vx[2] = -1.8;
-  m_particles.vy[2] = 0;
+  m_particles.vx[2] = 0;
+  m_particles.vy[2] = 4.78 + .522;
   m_particles.vz[2] = 0;
   m_particles.fx[2] = 0;
   m_particles.fy[2] = 0;
@@ -107,34 +107,24 @@ void NBodySim::file_init(std::filesystem::path path) {
   m_particles.fz = (double *)malloc(m_particle_count * sizeof(double));
   for (int i = 0; i < m_particle_count; i++) {
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.mass[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.x[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.y[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.z[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.vx[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.vy[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.vz[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.fx[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.fy[i] = std::stod(data);
     std::getline(ss, data, '\t');
-    std::cout << data << std::endl;
     m_particles.fz[i] = std::stod(data);
   }
 }
