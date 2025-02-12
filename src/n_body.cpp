@@ -5,6 +5,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <chrono>
 
 void NBodySim::rand_init(unsigned int n_particles) {
   m_particle_count = n_particles;
@@ -142,12 +143,17 @@ void NBodySim::start(double dt, unsigned int iterations, unsigned int dump_rate,
     return;
   }
 
+  std::cout << "Starting Simulation" << std::endl;
+  auto start = std::chrono::high_resolution_clock::now();
   for (unsigned int i = 0; i < m_iterations; i++) {
     step();
     if (i % m_dump_rate == 0) {
       dump_data(out_file);
     }
   }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Simulation Time: " << duration.count() << std::endl;
 }
 
 void NBodySim::step() {
